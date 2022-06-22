@@ -24,6 +24,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 var app = builder.Build();
 
+
+app.UseStaticFiles();
+
 app.UseRouting();
 app.UseEndpoints(endpoints =>
 {

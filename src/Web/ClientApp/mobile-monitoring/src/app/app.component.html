@@ -1,0 +1,20 @@
+<div>
+    <table>
+        <thead>
+        <tr>
+            <th>Имя узла</th>
+            <th>Дата последней статистики</th>
+            <th>Версия Client</th>
+            <th>Тип устройства</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let device of devices">
+            <td>{{device.fullName}}</td>
+            <td>{{device.lastUpdate}}</td>
+            <td>{{device.application.version}}</td>
+            <td>{{device.platform}}</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
