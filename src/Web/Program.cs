@@ -1,10 +1,12 @@
 #pragma warning disable SA1200
 using System.Text.Json.Serialization;
+using Infrastructure;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
+    .AddEnvironmentVariables()
     .Build();
 
 var logger = new LoggerConfiguration()
@@ -24,6 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddSwaggerDocument();
+builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("PostgreSql"));
 
 var app = builder.Build();
 
