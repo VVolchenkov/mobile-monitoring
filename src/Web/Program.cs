@@ -1,16 +1,18 @@
+#pragma warning disable SA1200
 using System.Text.Json.Serialization;
 using Serilog;
-using Web.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-var logConfig = new LogConfiguration();
-builder.Configuration.GetSection("Logging").Bind(logConfig);
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
 
-builder.Host.UseSerilog((_, lc) =>
-{
-    lc.WriteTo.Seq(logConfig.SeqAddress);
-    lc.WriteTo.Console();
-});
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
+
+
+builder.Host.UseSerilog(logger);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
