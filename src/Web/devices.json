@@ -1,0 +1,44 @@
+{
+  "devices": [
+    {
+      "Id": 1,
+      "FullName": "Ivanov Ivan Android A5 InfoTeCS Moscow",
+      "Platform": "Android",
+      "Application": {
+        "Version": "2.16.1.24"
+      }
+    },
+    {
+      "Id": 2,
+      "FullName": "Petrov Petr Android InfoTeCS Moscow",
+      "Platform": "Android",
+      "Application": {
+        "Version": "2.16.1.24"
+      }
+    },
+    {
+      "Id": 3,
+      "FullName": "Sidorov Sidr Sales Manager Rostov",
+      "Platform": "Windows",
+      "Application": {
+        "Version": "4.3.4.53803"
+      }
+    },
+    {
+      "Id": 4,
+      "FullName": "Ivanov Ivan Android A5 InfoTeCS Moscow",
+      "Platform": "Android",
+      "Application": {
+        "Version": "2.16.1.24"
+      }
+    },
+    {
+      "Id": 5,
+      "FullName": "Sidorov Sidr Sales Manager Rostov",
+      "Platform": "Windows",
+      "Application": {
+        "Version": "4.3.4.53803"
+      }
+    }
+  ]
+}
