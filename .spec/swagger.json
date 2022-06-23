@@ -1,0 +1,130 @@
+{
+    "x-generator": "NSwag v13.16.1.0 (NJsonSchema v10.7.2.0 (Newtonsoft.Json v13.0.0.0))",
+    "swagger": "2.0",
+    "info": {
+      "title": "My Title",
+      "version": "1.0.0"
+    },
+    "host": "localhost:7232",
+    "schemes": [
+      "https"
+    ],
+    "produces": [
+      "text/plain",
+      "application/json",
+      "text/json"
+    ],
+    "paths": {
+      "/api/Devices": {
+        "get": {
+          "tags": [
+            "Devices"
+          ],
+          "operationId": "Devices_GetDevices",
+          "responses": {
+            "200": {
+              "x-nullable": false,
+              "description": "",
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/Device"
+                }
+              }
+            },
+            "500": {
+              "description": ""
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "Devices"
+          ],
+          "operationId": "Devices_UploadDevice",
+          "consumes": [
+            "application/json",
+            "text/json",
+            "application/*+json"
+          ],
+          "parameters": [
+            {
+              "name": "device",
+              "in": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/Device"
+              },
+              "x-nullable": false
+            }
+          ],
+          "responses": {
+            "201": {
+              "x-nullable": false,
+              "description": "",
+              "schema": {
+                "$ref": "#/definitions/Device"
+              }
+            },
+            "500": {
+              "description": ""
+            }
+          }
+        }
+      }
+    },
+    "definitions": {
+      "Device": {
+        "type": "object",
+        "required": [
+          "id",
+          "fullName",
+          "platform",
+          "application",
+          "lastUpdate"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string"
+          },
+          "platform": {
+            "$ref": "#/definitions/Platform"
+          },
+          "application": {
+            "$ref": "#/definitions/Application"
+          },
+          "lastUpdate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Platform": {
+        "type": "string",
+        "description": "",
+        "x-enumNames": [
+          "Android",
+          "Windows"
+        ],
+        "enum": [
+          "Android",
+          "Windows"
+        ]
+      },
+      "Application": {
+        "type": "object",
+        "required": [
+          "version"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
