@@ -22,39 +22,23 @@ public class DevicesController : ControllerBase
     {
         logger.LogInformation("Get statistics for devices");
         
-        if (Devices.Count <= 0)
-        {
-            NotFound("There are no devices yet");
-        }
-        
         return Ok(Devices.Values);
     }
     
     [HttpPost]
     public IActionResult UploadDevice([FromBody] Device device)
     {
-        if (Devices.TryGetValue(device.Id, out _))
+        if (Devices.TryGetValue(device.Id, out var existingDevice))
         {
-            return BadRequest($"Device with id: {device.Id} already exists. Use Put method instead");
+            Devices.TryUpdate(device.Id, device, existingDevice);
+            logger.LogInformation($"Upload statistics for device: {device.Id}");
+            return Ok(device);
         }
 
         Devices.TryAdd(device.Id, device);
         logger.LogInformation($"Upload statistics for device: {device.Id}");
-
         return new ObjectResult(device) { StatusCode = StatusCodes.Status201Created };
-    }
-    
-    [HttpPut("{deviceId:int}")]
-    public IActionResult UpdateDevice([FromRoute] int deviceId, [FromBody] Device device)
-    {
-        if (!Devices.TryGetValue(deviceId, out var existingDevice))
-        {
-            return BadRequest($"Device with id: {deviceId} doesn't exist. Use Post method instead");
-        }
 
-        Devices.TryUpdate(deviceId, device, existingDevice);
-        logger.LogInformation($"Upload statistics for device: {device.Id}");
 
-        return Ok(device);
     }
 }
