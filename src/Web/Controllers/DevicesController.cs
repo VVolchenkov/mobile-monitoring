@@ -18,6 +18,7 @@ public class DevicesController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(Device[]), StatusCodes.Status200OK)] 
     public IActionResult GetDevices()
     {
         logger.LogInformation("Get statistics for devices");
@@ -26,6 +27,8 @@ public class DevicesController : ControllerBase
     }
     
     [HttpPost]
+    [ProducesResponseType(typeof(Device), StatusCodes.Status201Created)] 
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult UploadDevice([FromBody] Device device)
     {
         if (Devices.TryGetValue(device.Id, out var existingDevice))
