@@ -10,10 +10,7 @@ public class Device : BaseEntity
     /// <summary>
     /// Initializes a new instance of the <see cref="Device"/> class.
     /// </summary>
-    public Device()
-    {
-        LastUpdate = DateTime.UtcNow;
-    }
+    public Device() => LastUpdate = DateTime.UtcNow;
 
     /// <summary>
     /// FullName

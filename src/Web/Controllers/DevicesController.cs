@@ -36,7 +36,7 @@ public class DevicesController : ControllerBase
         logger.LogInformation("Get statistics for devices");
 
         var devices = await deviceRepository.GetAll();
-        
+
         return Ok(devices);
     }
 

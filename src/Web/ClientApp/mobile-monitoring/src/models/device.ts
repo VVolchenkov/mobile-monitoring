@@ -1,4 +1,4 @@
-import { Application } from './application';
+import {Application} from './application';
 
 export class Device {
     constructor(
@@ -7,5 +7,6 @@ export class Device {
         public readonly platform: string,
         public readonly application: Application,
         public readonly lastUpdate: Date
-    ) {}
+    ) {
+    }
 }

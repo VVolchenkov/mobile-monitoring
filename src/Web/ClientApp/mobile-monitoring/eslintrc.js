@@ -109,7 +109,7 @@ module.exports = {
         "brace-style": [
             "error",
             "1tbs",
-            { "allowSingleLine": true }
+            {"allowSingleLine": true}
         ],
         "constructor-super": "error",
         "curly": "error",

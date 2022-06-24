@@ -1,10 +1,10 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms';
-import { ApiService } from '../services/api.service';
-import { IApiService } from '../interfaces/api-service';
-import { HttpClientModule } from '@angular/common/http';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+import {AppComponent} from './app.component';
+import {FormsModule} from '@angular/forms';
+import {ApiService} from '../services/api.service';
+import {IApiService} from '../interfaces/api-service';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
     declarations: [AppComponent],
@@ -18,4 +18,5 @@ import { HttpClientModule } from '@angular/common/http';
     exports: [],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+}

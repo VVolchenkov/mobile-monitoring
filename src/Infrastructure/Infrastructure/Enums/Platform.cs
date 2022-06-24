@@ -9,6 +9,7 @@ public enum Platform
     /// Android
     /// </summary>
     Android,
+
     /// <summary>
     /// Windows
     /// </summary>

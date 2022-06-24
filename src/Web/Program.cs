@@ -13,15 +13,13 @@ var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
-
 builder.Host.UseSerilog(logger);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.Converters.
-        Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-    options.JsonSerializerOptions.DefaultIgnoreCondition = 
+    options.JsonSerializerOptions.DefaultIgnoreCondition =
         JsonIgnoreCondition.WhenWritingNull;
 });
 
@@ -29,7 +27,6 @@ builder.Services.AddSwaggerDocument();
 builder.Services.AddInfrastructure(configuration.GetConnectionString("PostgreSql"));
 
 var app = builder.Build();
-
 
 app.UseStaticFiles();
 

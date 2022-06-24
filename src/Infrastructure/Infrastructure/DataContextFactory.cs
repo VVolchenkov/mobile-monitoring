@@ -19,5 +19,4 @@ public class DataContextFactory
         connection.Open();
         return connection;
     }
-
 }
