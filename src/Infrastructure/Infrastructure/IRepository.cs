@@ -1,6 +1,6 @@
 namespace Infrastructure;
 
-public interface IRepository<T>
+public interface IRepository<T> where T: BaseEntity
 {
     Task<T?> Get(int id);
 
