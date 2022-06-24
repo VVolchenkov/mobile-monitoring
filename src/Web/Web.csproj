@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <CodeAnalysisRuleSet>infotecs.ruleset</CodeAnalysisRuleSet>
     </PropertyGroup>
 
     <ItemGroup>
@@ -19,6 +20,10 @@
 
     <ItemGroup>
       <Folder Include="ClientApp" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Infrastructure\Infrastructure\Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

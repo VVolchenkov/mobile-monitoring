@@ -1,8 +1,8 @@
 namespace Web.Controllers;
 
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
-using Web.Models;
-using System.Collections.Concurrent;
+using Infrastructure.Entities;
 
 /// <summary>
 /// Device Controller
@@ -11,15 +11,17 @@ using System.Collections.Concurrent;
 [Route("api/[controller]")]
 public class DevicesController : ControllerBase
 {
+    private readonly IRepository<Device> deviceRepository;
     private readonly ILogger<DevicesController> logger;
-    private static readonly ConcurrentDictionary<int, Device> Devices = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DevicesController"/> class.
     /// </summary>
+    /// <param name="deviceRepository">DeviceRepository.</param>
     /// <param name="logger">Logger.</param>
-    public DevicesController(ILogger<DevicesController> logger)
+    public DevicesController(IRepository<Device> deviceRepository, ILogger<DevicesController> logger)
     {
+        this.deviceRepository = deviceRepository;
         this.logger = logger;
     }
 
@@ -29,11 +31,13 @@ public class DevicesController : ControllerBase
     /// <returns>IActionResult.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(Device[]), StatusCodes.Status200OK)]
-    public IActionResult GetDevices()
+    public async Task<IActionResult> GetDevices()
     {
-        this.logger.LogInformation("Get statistics for devices");
+        logger.LogInformation("Get statistics for devices");
 
-        return this.Ok(Devices.Values);
+        var devices = await deviceRepository.GetAll();
+        
+        return Ok(devices);
     }
 
     /// <summary>
@@ -44,17 +48,18 @@ public class DevicesController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(Device), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult UploadDevice([FromBody] Device device)
+    public async Task<IActionResult> UploadDevice([FromBody] Device device)
     {
-        if (Devices.TryGetValue(device.Id, out var existingDevice))
+        var existingDevice = await deviceRepository.Get(device.Id);
+        if (existingDevice != null)
         {
-            Devices.TryUpdate(device.Id, device, existingDevice);
-            this.logger.LogInformation($"Upload statistics for device: {device.Id}");
-            return this.Ok(device);
+            await deviceRepository.Update(device);
+            logger.LogInformation($"Upload statistics for device: {device.Id}");
+            return Ok(device);
         }
 
-        Devices.TryAdd(device.Id, device);
-        this.logger.LogInformation($"Upload statistics for device: {device.Id}");
+        await deviceRepository.Insert(device);
+        logger.LogInformation($"Upload statistics for device: {device.Id}");
         return new ObjectResult(device) { StatusCode = StatusCodes.Status201Created };
     }
 }
