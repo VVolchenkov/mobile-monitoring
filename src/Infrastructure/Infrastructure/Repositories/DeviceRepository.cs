@@ -14,10 +14,10 @@ public class DeviceRepository : IRepository<Device>
 
     public async Task<Device?> Get(int id)
     {
-        var query = "SELECT * FROM devices WHERE id=2";
+        var query = "SELECT * FROM devices WHERE id=@id";
 
         var connection = contextFactory.CreateConnection();
-        var device = await connection.QueryFirstOrDefaultAsync<Device>(query);
+        var device = await connection.QueryFirstOrDefaultAsync<Device>(query, new { id });
 
         return device;
     }

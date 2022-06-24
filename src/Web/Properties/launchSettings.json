@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "Web": {
+    "Web [Development]": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
@@ -18,11 +18,14 @@
         "ConnectionStrings:PostgreSql": "Server=127.0.0.1;Database=postgres;Uid=postgres;Pwd=superuser;"
       }
     },
-    "IIS Express": {
-      "commandName": "IISExpress",
+    "Web [Production]": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
+      "applicationUrl": "https://localhost:7232;http://localhost:5232",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "ConnectionStrings:PostgreSql": "Server=127.0.0.1;Database=postgres;Uid=postgres;Pwd=superuser;"
       }
     }
   }

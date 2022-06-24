@@ -5,7 +5,7 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables()
     .Build();
 
@@ -26,7 +26,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddSwaggerDocument();
-builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("PostgreSql"));
+builder.Services.AddInfrastructure(configuration.GetConnectionString("PostgreSql"));
 
 var app = builder.Build();
 
