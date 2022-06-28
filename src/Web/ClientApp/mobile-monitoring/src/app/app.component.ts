@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
         this.selectedDeviceId$
             .pipe(
                 skip(1),
-                switchMap(device => this.apiService.getDeviceEvents(device))
+                switchMap(deviceId => this.apiService.getDeviceEvents(deviceId))
             )
             .subscribe((response) => {
                 this.events = response.events;

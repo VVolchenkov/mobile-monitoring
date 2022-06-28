@@ -20,6 +20,10 @@ tbody {
         border-style: solid;
         border-color: white;
     }
+
+    td {
+        padding: 10px;
+    }
 }
 
 table.main-table {
@@ -38,12 +42,6 @@ table.left {
         tr:hover {
             background: lightblue;
         }
-    }
-}
-
-tbody {
-    td {
-        padding: 10px;
     }
 }
 
