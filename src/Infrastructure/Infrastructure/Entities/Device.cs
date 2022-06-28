@@ -1,4 +1,5 @@
 using Infrastructure.Enums;
+using Infrastructure.Interfaces;
 
 namespace Infrastructure.Entities;
 

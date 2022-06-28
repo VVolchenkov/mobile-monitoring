@@ -1,7 +1,9 @@
-#pragma warning disable SA1200
 using System.Text.Json.Serialization;
 using Infrastructure;
+using Mapster;
+using MapsterMapper;
 using Serilog;
+using Web;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = new ConfigurationBuilder()
@@ -25,6 +27,13 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddSwaggerDocument();
 builder.Services.AddInfrastructure(configuration.GetConnectionString("PostgreSql"));
+
+var config = new TypeAdapterConfig();
+config.Apply(new MappingRegister());
+builder.Services.AddSingleton(config);
+builder.Services.AddScoped<IMapper, ServiceMapper>();
+
+
 
 var app = builder.Build();
 

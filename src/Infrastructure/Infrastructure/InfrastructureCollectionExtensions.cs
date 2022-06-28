@@ -1,4 +1,5 @@
 using Infrastructure.Entities;
+using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class InfrastructureCollectionExtensions
     public static void AddInfrastructure(this IServiceCollection services, string connectionString)
     {
         services.AddSingleton(new DataContextFactory(connectionString));
-        services.AddScoped<IRepository<Device>, DeviceRepository>();
+        services.AddScoped<IDeviceRepository, DeviceRepository>();
+        services.AddScoped<IEventRepository, EventRepository>();
     }
 }
