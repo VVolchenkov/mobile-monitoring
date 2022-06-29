@@ -3,7 +3,6 @@ namespace Web.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
-using Mapster;
 using MapsterMapper;
 using Web.Models;
 using Web.Models.Dtos;
@@ -50,8 +49,8 @@ public class DevicesController : ControllerBase
     {
         logger.LogInformation("Get statistics for devices");
 
-        var devices = await deviceRepository.GetAll();
-        var devicesDto = mapper.Map<DeviceDto[]>(devices);
+        IReadOnlyCollection<Device> devices = await deviceRepository.GetAll();
+        DeviceDto[] devicesDto = mapper.Map<DeviceDto[]>(devices);
 
         return Ok(devicesDto);
     }
@@ -66,7 +65,7 @@ public class DevicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadDevice([FromBody] Device device)
     {
-        var existingDevice = await deviceRepository.Get(device.Id);
+        Device? existingDevice = await deviceRepository.Get(device.Id);
         if (existingDevice != null)
         {
             await deviceRepository.Update(device);
@@ -91,8 +90,8 @@ public class DevicesController : ControllerBase
     {
         logger.LogInformation("Get device's events");
 
-        var events = await eventRepository.GetAllByDeviceId(deviceId);
-        var eventsDto = events.Select(x => mapper.Map<EventDto>(x));
+        IReadOnlyCollection<Event> events = await eventRepository.GetAllByDeviceId(deviceId);
+        IEnumerable<EventDto> eventsDto = events.Select(x => mapper.Map<EventDto>(x));
 
         return Ok(new DeviceEventsDto { Id = deviceId, Events = eventsDto.ToList() });
     }
@@ -108,17 +107,17 @@ public class DevicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadDeviceEvents([FromRoute] int deviceId, [FromBody] IEnumerable<EventInput> eventInputs)
     {
-        var existingDevice = await deviceRepository.Get(deviceId);
+        Device? existingDevice = await deviceRepository.Get(deviceId);
         if (existingDevice == null)
         {
             return BadRequest($"There is no device with id:{deviceId}");
         }
 
-        var events = mapper.Map<Event[]>(eventInputs);
+        Event[] events = mapper.Map<Event[]>(eventInputs);
 
         await eventRepository.InsertBulk(events);
 
-        var eventsDto = mapper.Map<EventDto[]>(events);
+        EventDto[] eventsDto = mapper.Map<EventDto[]>(events);
 
         logger.LogInformation($"Upload device's events for device: {deviceId}");
 

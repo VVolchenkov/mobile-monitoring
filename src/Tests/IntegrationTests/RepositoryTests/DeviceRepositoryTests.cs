@@ -43,10 +43,13 @@ public class DeviceRepositoryTests
 
         // Assert
         device.Should().NotBeNull();
+        device.Should().BeEquivalentTo(arrangeDevice,
+            options => options.Using<DateTime>(
+                ctx => ctx.Should().NotBeEquivalentTo(ctx.Expectation)).WhenTypeIs<DateTime>());
     }
 
     [Fact]
-    public async Task ShouldInsertAndUpdateDevice()
+    public async Task ShouldUpdateDevice()
     {
         // Arrange
         var arrangeDevice = new Device
@@ -59,15 +62,9 @@ public class DeviceRepositoryTests
         };
 
         var changedPlatform = Platform.Windows;
-
-        // Act
         await deviceRepository.Insert(arrangeDevice);
 
-        Device? deviceAfterInsert = await deviceRepository.Get(arrangeDevice.Id);
-
-        deviceAfterInsert.Should().NotBeNull();
-        deviceAfterInsert!.Platform.Should().Be(arrangeDevice.Platform);
-
+        // Act
         arrangeDevice.Platform = changedPlatform;
         await deviceRepository.Update(arrangeDevice);
 

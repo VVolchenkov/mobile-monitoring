@@ -5,15 +5,16 @@ using Infrastructure.Migrations.Extensions;
 using Mapster;
 using MapsterMapper;
 using Serilog;
+using Serilog.Core;
 using Web;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = new ConfigurationBuilder()
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IConfigurationRoot? configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables()
     .Build();
 
-var logger = new LoggerConfiguration()
+Logger? logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .CreateLogger();
 
@@ -34,9 +35,9 @@ config.Apply(new MappingRegister());
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-var serviceProvider = app.Services;
+IServiceProvider serviceProvider = app.Services;
 var migrationManager = serviceProvider.GetRequiredService<MigrationManager>();
 migrationManager.MigrateDatabase(serviceProvider, configuration);
 
