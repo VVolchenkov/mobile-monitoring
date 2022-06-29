@@ -1,4 +1,3 @@
-using System.Data;
 using Dapper;
 using Infrastructure.Entities;
 using Infrastructure.Interfaces;
@@ -8,25 +7,24 @@ namespace Infrastructure.Repositories;
 
 public class EventRepository : GenericRepository<Event>, IEventRepository
 {
-    private readonly DataContextFactory contextFactory;
+    private readonly IUnitOfWork unitOfWork;
 
-    public EventRepository(DataContextFactory contextFactory)
-        : base(contextFactory) => this.contextFactory = contextFactory;
+    public EventRepository(IUnitOfWork unitOfWork)
+        : base(unitOfWork) => this.unitOfWork = unitOfWork;
 
     public override Task Insert(Event eventEntity)
     {
         string query = @"INSERT INTO events(name, description, device_id, date) " +
             "VALUES (@Name, @Description, @DeviceId, @Date)";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        return connection.ExecuteAsync(query, eventEntity);
+        return unitOfWork.Connection.ExecuteAsync(query, eventEntity, unitOfWork.Transaction);
     }
 
     public override Task InsertBulk(IEnumerable<Event> eventEntities)
     {
-        IDbConnection connection = contextFactory.CreateConnection();
-        BulkOperation<Event> bulkOperation = connection.GetBulkOperation<Event>("events");
+        BulkOperation<Event> bulkOperation = unitOfWork.Connection.GetBulkOperation<Event>("events", unitOfWork);
         bulkOperation.IgnoreOnInsertExpression = c => new { c.Id, c.Date };
+
         return bulkOperation.BulkInsertAsync(eventEntities);
     }
 
@@ -35,8 +33,7 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
         string query = "SELECT d.id, e.date, e.name, e.description, e.device_id " +
             "FROM devices d JOIN events e ON e.device_id = d.id WHERE d.id=@deviceId";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        IEnumerable<Event> events = await connection.QueryAsync<Event, Device, Event>(
+        IEnumerable<Event> events = await unitOfWork.Connection.QueryAsync<Event, Device, Event>(
             query,
             (eventEntity, device) =>
             {
@@ -44,7 +41,8 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
                 return eventEntity;
             },
             splitOn: "device_id",
-            param: new { deviceId });
+            param: new { deviceId },
+            transaction: unitOfWork.Transaction);
 
         return events.ToList().AsReadOnly();
     }

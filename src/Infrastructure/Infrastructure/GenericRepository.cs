@@ -7,12 +7,12 @@ namespace Infrastructure;
 public abstract class GenericRepository<T> : IRepository<T>
     where T : BaseEntity
 {
-    private readonly DataContextFactory contextFactory;
+    private readonly IUnitOfWork unitOfWork;
     private readonly string tableName;
 
-    protected GenericRepository(DataContextFactory contextFactory)
+    protected GenericRepository(IUnitOfWork unitOfWork)
     {
-        this.contextFactory = contextFactory;
+        this.unitOfWork = unitOfWork;
         tableName = typeof(T).Name.ToLower() + "s";
     }
 
@@ -20,8 +20,7 @@ public abstract class GenericRepository<T> : IRepository<T>
     {
         var query = $"SELECT * FROM {tableName} WHERE id=@id";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        var entity = await connection.QueryFirstOrDefaultAsync<T>(query, new { id });
+        var entity = await unitOfWork.Connection.QueryFirstOrDefaultAsync<T>(query, new { id }, unitOfWork.Transaction);
 
         return entity;
     }
@@ -30,8 +29,7 @@ public abstract class GenericRepository<T> : IRepository<T>
     {
         var query = $"SELECT * FROM {tableName}";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        IEnumerable<T>? entities = await connection.QueryAsync<T>(query);
+        IEnumerable<T>? entities = await unitOfWork.Connection.QueryAsync<T>(query, transaction: unitOfWork.Transaction);
 
         return entities.ToList().AsReadOnly();
     }

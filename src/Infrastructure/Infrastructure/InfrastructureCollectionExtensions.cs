@@ -22,6 +22,7 @@ public static class InfrastructureCollectionExtensions
         services.AddSingleton<Database>();
         services.AddScoped<IDeviceRepository, DeviceRepository>();
         services.AddScoped<IEventRepository, EventRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         AddFluentMigrator(services, connectionString);
     }
