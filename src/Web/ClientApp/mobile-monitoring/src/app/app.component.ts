@@ -2,13 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IApiService } from '../interfaces/api-service';
 import { Device } from '../models/device';
 import { DeviceEvents } from '../models/device-events';
-import {
-    BehaviorSubject,
-    skip,
-    Subject,
-    switchMap,
-    takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, of, skip, Subject, switchMap, takeUntil } from 'rxjs';
 import { Event } from '../models/event';
 
 @Component({
@@ -35,8 +29,12 @@ export class AppComponent implements OnInit, OnDestroy {
 
         this.selectedDeviceId$
             .pipe(
-                skip(1),
-                switchMap(deviceId => this.apiService.getDeviceEvents(deviceId))
+                switchMap((deviceId) =>
+                    !deviceId
+                        ? this.apiService.getDeviceEvents(deviceId)
+                        : of({ events: [] })
+                ),
+                takeUntil(this.componentDestroyed$)
             )
             .subscribe((response) => {
                 this.events = response.events;
@@ -49,11 +47,9 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public setSelectedDeviceId(deviceId: string): void {
-        const selectedDevice = this.devices.find(
-            (x) => x.id === deviceId
-        );
+        const selectedDevice = this.devices.find((x) => x.id === deviceId);
 
-        if(selectedDevice) {
+        if (selectedDevice) {
             this.selectedDevice = selectedDevice;
             this.selectedDeviceId$.next(selectedDevice.id);
         }

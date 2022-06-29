@@ -12,7 +12,7 @@ public class Init : Migration
             .WithColumn("full_name").AsFixedLengthString(50).NotNullable()
             .WithColumn("platform").AsInt64().NotNullable()
             .WithColumn("version").AsFixedLengthString(20).NotNullable()
-            .WithColumn("last_update").AsDate().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+            .WithColumn("last_update").AsDateTimeOffset().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
 
         Create.Table("events")
             .WithColumn("id").AsInt64().NotNullable().PrimaryKey().Identity()

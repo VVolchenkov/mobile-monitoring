@@ -51,7 +51,7 @@ public class DevicesController : ControllerBase
         logger.LogInformation("Get statistics for devices");
 
         var devices = await deviceRepository.GetAll();
-        var devicesDto = devices.Select(x => mapper.Map<DeviceDto>(x));
+        var devicesDto = mapper.Map<DeviceDto[]>(devices);
 
         return Ok(devicesDto);
     }

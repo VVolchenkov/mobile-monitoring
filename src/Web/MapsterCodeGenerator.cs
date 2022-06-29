@@ -22,7 +22,6 @@ public class MapsterCodeGenerator : ICodeGenerationRegister
             {
                 cfg.Ignore(x => x.Id);
                 cfg.Ignore(x => x.DeviceId);
-                cfg.Ignore(x => x.DeviceId);
                 cfg.Ignore(x => x.Device);
             });
 

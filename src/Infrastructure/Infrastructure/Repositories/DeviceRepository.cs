@@ -14,7 +14,8 @@ public class DeviceRepository : GenericRepository<Device>, IDeviceRepository
 
     public override Task Update(Device device)
     {
-        var query = "UPDATE devices SET id=@Id, full_name=@FullName, platform=@platform, version=@Version, last_update=@LastUpdate WHERE id=@Id";
+        var query = "UPDATE devices SET id=@Id, full_name=@FullName, " +
+            "platform=@platform, version=@Version, last_update=@LastUpdate WHERE id=@Id";
 
         IDbConnection connection = contextFactory.CreateConnection();
         return connection.ExecuteAsync(query, device);

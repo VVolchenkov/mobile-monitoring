@@ -15,6 +15,8 @@ public class MappingRegister : IRegister
             .Map(d => d.Os, s => s.Platform)
             .Map(d => d.Name, s => s.FullName);
 
+        config.NewConfig<Device[], DeviceDto[]>();
+
         config.NewConfig<Event, EventDto>();
         config.NewConfig<EventInput, Event>();
     }
