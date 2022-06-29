@@ -16,5 +16,6 @@ public class MappingRegister : IRegister
             .Map(d => d.Name, s => s.FullName);
 
         config.NewConfig<Event, EventDto>();
+        config.NewConfig<EventInput, Event>();
     }
 }

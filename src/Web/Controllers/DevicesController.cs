@@ -101,12 +101,12 @@ public class DevicesController : ControllerBase
     /// Upload device events
     /// </summary>
     /// <param name="deviceId">deviceId.</param>
-    /// <param name="events">events.</param>
+    /// <param name="eventInputs">events.</param>
     /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
     [HttpPut("{deviceId:int}/events")]
     [ProducesResponseType(typeof(Device[]), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> UploadDeviceEvents([FromRoute] int deviceId, [FromBody] IEnumerable<Event> events)
+    public async Task<IActionResult> UploadDeviceEvents([FromRoute] int deviceId, [FromBody] IEnumerable<EventInput> eventInputs)
     {
         var existingDevice = await deviceRepository.Get(deviceId);
         if (existingDevice == null)
@@ -114,10 +114,14 @@ public class DevicesController : ControllerBase
             return BadRequest($"There is no device with id:{deviceId}");
         }
 
+        var events = mapper.Map<Event[]>(eventInputs);
+        
         await eventRepository.InsertBulk(events);
+
+        var eventsDto = mapper.Map<EventDto[]>(events);
 
         logger.LogInformation($"Upload device's events for device: {deviceId}");
 
-        return new ObjectResult(events) { StatusCode = StatusCodes.Status201Created };
+        return new ObjectResult(eventsDto) { StatusCode = StatusCodes.Status201Created };
     }
 }
