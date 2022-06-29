@@ -1,18 +1,63 @@
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
 table {
-    width: 100%;
     border-collapse: collapse;
     text-align: left;
+
+    th {
+        color: gray;
+        padding: 10px;
+    }
 }
 
-th {
-    color: gray;
-    padding: 10px;
+tbody {
+    tr {
+        border-width: 3px;
+        border-style: solid;
+        border-color: white;
+    }
+
+    td {
+        padding: 10px;
+    }
 }
 
-tbody td {
-    padding: 10px;
+table.main-table {
+    tbody {
+        tr:nth-child(even) {
+            background-color: gainsboro;
+            border-width: 3px;
+            border-style: solid;
+            border-color: white;
+        }
+    }
 }
 
-tbody tr:nth-child(even){
-    background-color: lightgray;
+table.left {
+    tbody {
+        tr:hover {
+            background: lightblue;
+        }
+    }
+}
+
+.bold {
+    font-weight: bold;
+}
+
+hr {
+    width: 1px;
+    margin: 10px;
+}
+
+.details {
+    width: 100%;
+}
+
+.large-text {
+    font-size: 20px;
 }

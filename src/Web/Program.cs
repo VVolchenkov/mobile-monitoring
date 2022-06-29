@@ -1,35 +1,45 @@
-#pragma warning disable SA1200
 using System.Text.Json.Serialization;
+using FluentMigrator.Runner;
 using Infrastructure;
+using Infrastructure.Migrations.Extensions;
+using Mapster;
+using MapsterMapper;
 using Serilog;
+using Serilog.Core;
+using Web;
 
-var builder = WebApplication.CreateBuilder(args);
-var configuration = new ConfigurationBuilder()
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+IConfigurationRoot? configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables()
     .Build();
 
-var logger = new LoggerConfiguration()
+Logger? logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .CreateLogger();
-
 
 builder.Host.UseSerilog(logger);
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
-    options.JsonSerializerOptions.Converters.
-        Add(new JsonStringEnumConverter());
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 
-    options.JsonSerializerOptions.DefaultIgnoreCondition = 
-        JsonIgnoreCondition.WhenWritingNull;
+    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 });
 
 builder.Services.AddSwaggerDocument();
-builder.Services.AddInfrastructure(configuration.GetConnectionString("PostgreSql"));
+builder.Services.AddInfrastructure(configuration);
 
-var app = builder.Build();
+var config = new TypeAdapterConfig();
+config.Apply(new MappingRegister());
+builder.Services.AddSingleton(config);
+builder.Services.AddScoped<IMapper, ServiceMapper>();
 
+WebApplication app = builder.Build();
+
+IServiceProvider serviceProvider = app.Services;
+var migrationManager = serviceProvider.GetRequiredService<MigrationManager>();
+migrationManager.MigrateDatabase(serviceProvider, configuration);
 
 app.UseStaticFiles();
 
