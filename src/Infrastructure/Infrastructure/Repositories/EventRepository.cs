@@ -32,7 +32,7 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
 
     public async Task<IReadOnlyCollection<Event>> GetAllByDeviceId(int deviceId)
     {
-        var query = "SELECT d.id, e.date, e.name, e.description, e.device_id " +
+        string query = "SELECT d.id, e.date, e.name, e.description, e.device_id " +
             "FROM devices d JOIN events e ON e.device_id = d.id WHERE d.id=@deviceId";
 
         IDbConnection connection = contextFactory.CreateConnection();

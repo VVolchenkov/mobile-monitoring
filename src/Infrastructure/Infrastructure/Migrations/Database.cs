@@ -7,10 +7,7 @@ public class Database
 {
     private readonly DataContextFactory dataContextFactory;
 
-    public Database(DataContextFactory dataContextFactory)
-    {
-        this.dataContextFactory = dataContextFactory;
-    }
+    public Database(DataContextFactory dataContextFactory) => this.dataContextFactory = dataContextFactory;
 
     public void CreateDatabase(string databaseName, bool isForTests = false)
     {
@@ -21,7 +18,7 @@ public class Database
 
         dynamic[] records = connection.Query(query, parameters).ToArray();
 
-        if(records.Any() && isForTests)
+        if (records.Any() && isForTests)
         {
             connection.Execute($"DROP DATABASE {databaseName}");
         }

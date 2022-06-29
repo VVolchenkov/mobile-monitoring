@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IApiService } from '../interfaces/api-service';
-import { Device } from '../models/device';
-import { DeviceEvents } from '../models/device-events';
-import { BehaviorSubject, of, skip, Subject, switchMap, takeUntil } from 'rxjs';
-import { Event } from '../models/event';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {IApiService} from '../interfaces/api-service';
+import {Device} from '../models/device';
+import {DeviceEvents} from '../models/device-events';
+import {BehaviorSubject, of, skip, Subject, switchMap, takeUntil} from 'rxjs';
+import {Event} from '../models/event';
 
 @Component({
     selector: 'app-root',
@@ -17,7 +17,8 @@ export class AppComponent implements OnInit, OnDestroy {
     selectedDevice: Device | undefined;
     selectedDeviceId$ = new BehaviorSubject<string>('');
 
-    constructor(private readonly apiService: IApiService) {}
+    constructor(private readonly apiService: IApiService) {
+    }
 
     public ngOnInit(): void {
         this.apiService
@@ -32,7 +33,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 switchMap((deviceId) =>
                     !deviceId
                         ? this.apiService.getDeviceEvents(deviceId)
-                        : of({ events: [] })
+                        : of({events: []})
                 ),
                 takeUntil(this.componentDestroyed$)
             )

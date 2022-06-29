@@ -115,7 +115,7 @@ public class DevicesController : ControllerBase
         }
 
         var events = mapper.Map<Event[]>(eventInputs);
-        
+
         await eventRepository.InsertBulk(events);
 
         var eventsDto = mapper.Map<EventDto[]>(events);

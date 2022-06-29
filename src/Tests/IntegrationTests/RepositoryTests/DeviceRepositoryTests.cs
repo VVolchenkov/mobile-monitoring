@@ -108,6 +108,6 @@ public class DeviceRepositoryTests
 
         // Assert
         devices.Should().NotBeNull();
-        devices.Count.Should().Be(GetNextId()-1);
+        devices.Count.Should().Be(GetNextId() - 1);
     }
 }

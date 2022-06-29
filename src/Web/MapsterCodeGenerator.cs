@@ -8,8 +8,7 @@ using Web.Models;
 public class MapsterCodeGenerator : ICodeGenerationRegister
 {
     /// <inheritdoc/>
-    public void Register(CodeGenerationConfig config)
-    {
+    public void Register(CodeGenerationConfig config) =>
         config
             .AdaptTo("[name]Dto")
             .ForType<Device>(cfg =>
@@ -17,18 +16,14 @@ public class MapsterCodeGenerator : ICodeGenerationRegister
                 cfg.Map(x => x.Platform, "Os");
                 cfg.Map(x => x.FullName, "Name");
             })
-            
             .ForType<Event>(cfg =>
             {
                 cfg.Ignore(x => x.Id);
                 cfg.Ignore(x => x.DeviceId);
                 cfg.Ignore(x => x.Device);
             });
-
-        // Не удалось найти возможность кастомизировать генерируемые Mapper'ы
-        
-        // config.GenerateMapper("[name]Mapper")
-        //     .ForType<Device>()
-        //     .ForType<Event>();
-    }
+    // Не удалось найти возможность кастомизировать генерируемые Mapper'ы
+    // config.GenerateMapper("[name]Mapper")
+    //     .ForType<Device>()
+    //     .ForType<Event>();
 }

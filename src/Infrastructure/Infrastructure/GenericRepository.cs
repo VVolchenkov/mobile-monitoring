@@ -4,7 +4,8 @@ using Infrastructure.Interfaces;
 
 namespace Infrastructure;
 
-public abstract class GenericRepository<T>: IRepository<T> where T: BaseEntity
+public abstract class GenericRepository<T> : IRepository<T>
+    where T : BaseEntity
 {
     private readonly DataContextFactory contextFactory;
     private readonly string tableName;
