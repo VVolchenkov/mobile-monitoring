@@ -1,6 +1,5 @@
 using System.Data;
 using Infrastructure.Interfaces;
-using Infrastructure.Repositories;
 
 namespace Infrastructure;
 
@@ -11,4 +10,5 @@ public interface IUnitOfWork
     IDbTransaction Transaction { get; }
     IDbConnection Connection { get; }
     void SaveChanges();
+    void Rollback();
 }

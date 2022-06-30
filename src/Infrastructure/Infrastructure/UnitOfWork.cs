@@ -30,6 +30,18 @@ public class UnitOfWork : IUnitOfWork, IDisposable
         }
     }
 
+    public void Rollback()
+    {
+        try
+        {
+            Transaction.Rollback();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine($"Can not rollback transaction. {e}");
+        }
+    }
+
     public void Dispose()
     {
         Connection.Close();
