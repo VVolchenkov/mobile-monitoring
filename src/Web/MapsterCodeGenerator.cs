@@ -22,8 +22,4 @@ public class MapsterCodeGenerator : ICodeGenerationRegister
                 cfg.Ignore(x => x.DeviceId);
                 cfg.Ignore(x => x.Device);
             });
-    // Не удалось найти возможность кастомизировать генерируемые Mapper'ы
-    // config.GenerateMapper("[name]Mapper")
-    //     .ForType<Device>()
-    //     .ForType<Event>();
 }
