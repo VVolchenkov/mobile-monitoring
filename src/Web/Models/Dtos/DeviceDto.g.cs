@@ -3,7 +3,7 @@ using Infrastructure.Enums;
 
 namespace Web.Models
 {
-    public partial record DeviceDto
+    public partial class DeviceDto
     {
         public string Name { get; set; }
         public Platform Os { get; set; }

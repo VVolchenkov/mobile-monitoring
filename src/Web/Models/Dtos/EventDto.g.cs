@@ -2,7 +2,7 @@ using System;
 
 namespace Web.Models
 {
-    public partial record EventDto
+    public partial class EventDto
     {
         public string Name { get; set; }
         public string Description { get; set; }

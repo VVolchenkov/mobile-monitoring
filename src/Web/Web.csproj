@@ -34,7 +34,7 @@
 
   <Target Name="Mapster" AfterTargets="AfterBuild">
     <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r"/>
+    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos"/>
     <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a $(TargetDir)$(ProjectName).dll -n Web.Mappers -o Mappers -r"/>
   </Target>
 
