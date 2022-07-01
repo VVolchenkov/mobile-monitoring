@@ -7,22 +7,22 @@ namespace Infrastructure.Repositories;
 
 public class EventRepository : GenericRepository<Event>, IEventRepository
 {
-    private readonly IUnitOfWork unitOfWork;
-
     public EventRepository(IUnitOfWork unitOfWork)
-        : base(unitOfWork) => this.unitOfWork = unitOfWork;
+        : base(unitOfWork)
+    {
+    }
 
     public override Task Insert(Event eventEntity)
     {
         string query = @"INSERT INTO events(name, description, device_id, date) " +
             "VALUES (@Name, @Description, @DeviceId, @Date)";
 
-        return unitOfWork.Connection.ExecuteAsync(query, eventEntity, unitOfWork.Transaction);
+        return UnitOfWork.Connection.ExecuteAsync(query, eventEntity, UnitOfWork.Transaction);
     }
 
     public override Task InsertBulk(IEnumerable<Event> eventEntities)
     {
-        BulkOperation<Event> bulkOperation = unitOfWork.Connection.GetBulkOperation<Event>("events", unitOfWork);
+        BulkOperation<Event> bulkOperation = UnitOfWork.Connection.GetBulkOperation<Event>("events", UnitOfWork);
         bulkOperation.IgnoreOnInsertExpression = c => new { c.Id, c.Date };
 
         return bulkOperation.BulkInsertAsync(eventEntities);
@@ -33,7 +33,7 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
         string query = "SELECT d.id, e.date, e.name, e.description, e.device_id " +
             "FROM devices d JOIN events e ON e.device_id = d.id WHERE d.id=@deviceId";
 
-        IEnumerable<Event> events = await unitOfWork.Connection.QueryAsync<Event, Device, Event>(
+        IEnumerable<Event> events = await UnitOfWork.Connection.QueryAsync<Event, Device, Event>(
             query,
             (eventEntity, device) =>
             {
@@ -42,7 +42,7 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
             },
             splitOn: "device_id",
             param: new { deviceId },
-            transaction: unitOfWork.Transaction);
+            transaction: UnitOfWork.Transaction);
 
         return events.ToList().AsReadOnly();
     }
