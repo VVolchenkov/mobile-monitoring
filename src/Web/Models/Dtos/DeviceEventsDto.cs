@@ -13,5 +13,5 @@ public class DeviceEventsDto
     /// <summary>
     /// Events
     /// </summary>
-    public ICollection<EventDto> Events { get; set; }
+    public ICollection<EventDto> Events { get; set; } = null!;
 }

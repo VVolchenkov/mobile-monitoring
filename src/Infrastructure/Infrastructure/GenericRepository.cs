@@ -1,4 +1,3 @@
-using System.Data;
 using Dapper;
 using Infrastructure.Interfaces;
 
@@ -7,12 +6,12 @@ namespace Infrastructure;
 public abstract class GenericRepository<T> : IRepository<T>
     where T : BaseEntity
 {
-    private readonly DataContextFactory contextFactory;
+    protected readonly IUnitOfWork UnitOfWork;
     private readonly string tableName;
 
-    protected GenericRepository(DataContextFactory contextFactory)
+    protected GenericRepository(IUnitOfWork unitOfWork)
     {
-        this.contextFactory = contextFactory;
+        UnitOfWork = unitOfWork;
         tableName = typeof(T).Name.ToLower() + "s";
     }
 
@@ -20,8 +19,7 @@ public abstract class GenericRepository<T> : IRepository<T>
     {
         var query = $"SELECT * FROM {tableName} WHERE id=@id";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        var entity = await connection.QueryFirstOrDefaultAsync<T>(query, new { id });
+        var entity = await UnitOfWork.Connection.QueryFirstOrDefaultAsync<T>(query, new { id }, UnitOfWork.Transaction);
 
         return entity;
     }
@@ -30,8 +28,7 @@ public abstract class GenericRepository<T> : IRepository<T>
     {
         var query = $"SELECT * FROM {tableName}";
 
-        IDbConnection connection = contextFactory.CreateConnection();
-        IEnumerable<T>? entities = await connection.QueryAsync<T>(query);
+        IEnumerable<T>? entities = await UnitOfWork.Connection.QueryAsync<T>(query, transaction: UnitOfWork.Transaction);
 
         return entities.ToList().AsReadOnly();
     }

@@ -15,7 +15,7 @@ public class DeviceRepositoryTests
     private readonly IDeviceRepository deviceRepository;
 
     public DeviceRepositoryTests(DatabaseFixture databaseFixture)
-        => deviceRepository = new DeviceRepository(databaseFixture.DataContextFactory);
+        => deviceRepository = new DeviceRepository(databaseFixture.UnitOfWork);
 
     private int GetNextId()
     {

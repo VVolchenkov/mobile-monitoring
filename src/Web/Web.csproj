@@ -12,12 +12,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Mapster" Version="7.3.0"/>
-    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0"/>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1"/>
-    <PackageReference Include="NSwag.AspNetCore" Version="13.16.1"/>
-    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0"/>
-    <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1"/>
+    <PackageReference Include="Mapster" Version="7.3.0" />
+    <PackageReference Include="Mapster.DependencyInjection" Version="1.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.16.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="5.0.0" />
+    <PackageReference Include="Serilog.Sinks.Seq" Version="5.1.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,17 +25,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp"/>
+    <Folder Include="ClientApp" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure\Infrastructure.csproj"/>
+    <ProjectReference Include="..\Infrastructure\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <Target Name="Mapster" AfterTargets="AfterBuild">
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r"/>
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster mapper -a $(TargetDir)$(ProjectName).dll -n Web.Mappers -o Mappers -r"/>
-  </Target>
+<!--  <Target Condition="$(Configuration)==DEBUG" Name="Mapster" AfterTargets="AfterBuild">-->
+<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />-->
+<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r" />-->
+<!--  </Target>-->
 
 </Project>

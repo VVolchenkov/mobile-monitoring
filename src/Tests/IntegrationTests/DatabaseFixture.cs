@@ -1,18 +1,14 @@
-using System.Reflection;
-using FluentMigrator.Runner;
 using Infrastructure;
-using Infrastructure.Migrations;
 using Infrastructure.Migrations.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Npgsql;
 using Xunit;
 
 namespace IntegrationTests;
 
 public class DatabaseFixture
 {
-    public DataContextFactory DataContextFactory;
+    public IUnitOfWork UnitOfWork;
 
     public DatabaseFixture()
     {
@@ -24,10 +20,11 @@ public class DatabaseFixture
         services.AddInfrastructure(configuration);
 
         ServiceProvider? serviceProvider = services.BuildServiceProvider();
-        DataContextFactory = serviceProvider.GetRequiredService<DataContextFactory>();
 
         var migrationManager = serviceProvider.GetRequiredService<MigrationManager>();
         migrationManager.MigrateDatabase(serviceProvider, configuration, true);
+
+        UnitOfWork = serviceProvider.GetRequiredService<IUnitOfWork>();
     }
 
     [CollectionDefinition("Database")]

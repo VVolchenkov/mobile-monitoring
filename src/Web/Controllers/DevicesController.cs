@@ -1,8 +1,9 @@
+using Infrastructure;
+
 namespace Web.Controllers;
 
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Entities;
-using Infrastructure.Interfaces;
 using MapsterMapper;
 using Web.Models;
 using Web.Models.Dtos;
@@ -14,26 +15,22 @@ using Web.Models.Dtos;
 [Route("api/[controller]")]
 public class DevicesController : ControllerBase
 {
+    private readonly IUnitOfWork unitOfWork;
     private readonly IMapper mapper;
-    private readonly IDeviceRepository deviceRepository;
-    private readonly IEventRepository eventRepository;
     private readonly ILogger<DevicesController> logger;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DevicesController"/> class.
     /// </summary>
-    /// <param name="deviceRepository">DeviceRepository.</param>
-    /// <param name="eventRepository">EventRepository.</param>
+    /// <param name="unitOfWork">unitOfWork.</param>
     /// <param name="mapper">DeviceMapper.</param>
     /// <param name="logger">Logger.</param>
     public DevicesController(
-        IDeviceRepository deviceRepository,
-        IEventRepository eventRepository,
+        IUnitOfWork unitOfWork,
         IMapper mapper,
         ILogger<DevicesController> logger)
     {
-        this.deviceRepository = deviceRepository;
-        this.eventRepository = eventRepository;
+        this.unitOfWork = unitOfWork;
         this.mapper = mapper;
         this.logger = logger;
     }
@@ -49,8 +46,10 @@ public class DevicesController : ControllerBase
     {
         logger.LogInformation("Get statistics for devices");
 
-        IReadOnlyCollection<Device> devices = await deviceRepository.GetAll();
+        IReadOnlyCollection<Device> devices = await unitOfWork.DeviceRepository.GetAll();
         DeviceDto[] devicesDto = mapper.Map<DeviceDto[]>(devices);
+
+        unitOfWork.SaveChanges();
 
         return Ok(devicesDto);
     }
@@ -65,15 +64,17 @@ public class DevicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadDevice([FromBody] Device device)
     {
-        Device? existingDevice = await deviceRepository.Get(device.Id);
+        Device? existingDevice = await unitOfWork.DeviceRepository.Get(device.Id);
         if (existingDevice != null)
         {
-            await deviceRepository.Update(device);
+            await unitOfWork.DeviceRepository.Update(device);
             logger.LogInformation($"Upload statistics for device: {device.Id}");
             return Ok(device);
         }
 
-        await deviceRepository.Insert(device);
+        await unitOfWork.DeviceRepository.Insert(device);
+
+        unitOfWork.SaveChanges();
         logger.LogInformation($"Upload statistics for device: {device.Id}");
         return new ObjectResult(device) { StatusCode = StatusCodes.Status201Created };
     }
@@ -90,7 +91,9 @@ public class DevicesController : ControllerBase
     {
         logger.LogInformation("Get device's events");
 
-        IReadOnlyCollection<Event> events = await eventRepository.GetAllByDeviceId(deviceId);
+        IReadOnlyCollection<Event> events = await unitOfWork.EventRepository.GetAllByDeviceId(deviceId);
+        unitOfWork.SaveChanges();
+
         IEnumerable<EventDto> eventsDto = events.Select(x => mapper.Map<EventDto>(x));
 
         return Ok(new DeviceEventsDto { Id = deviceId, Events = eventsDto.ToList() });
@@ -107,7 +110,7 @@ public class DevicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadDeviceEvents([FromRoute] int deviceId, [FromBody] IEnumerable<EventInput> eventInputs)
     {
-        Device? existingDevice = await deviceRepository.Get(deviceId);
+        Device? existingDevice = await unitOfWork.DeviceRepository.Get(deviceId);
         if (existingDevice == null)
         {
             return BadRequest($"There is no device with id:{deviceId}");
@@ -115,7 +118,9 @@ public class DevicesController : ControllerBase
 
         Event[] events = mapper.Map<Event[]>(eventInputs);
 
-        await eventRepository.InsertBulk(events);
+        await unitOfWork.EventRepository.InsertBulk(events);
+
+        unitOfWork.SaveChanges();
 
         EventDto[] eventsDto = mapper.Map<EventDto[]>(events);
 
