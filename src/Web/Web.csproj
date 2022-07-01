@@ -32,9 +32,9 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <Target Condition="$(Configuration)==DEBUG" Name="Mapster" AfterTargets="AfterBuild">
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />
-    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r" />
-  </Target>
+<!--  <Target Condition="$(Configuration)==DEBUG" Name="Mapster" AfterTargets="AfterBuild">-->
+<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />-->
+<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r" />-->
+<!--  </Target>-->
 
 </Project>
