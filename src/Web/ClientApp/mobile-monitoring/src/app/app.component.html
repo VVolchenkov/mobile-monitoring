@@ -1,5 +1,9 @@
 <div class='container'>
     <div class='main'>
+        <label>
+            <input type="checkbox" [checked]="getEvents"
+                   (change)="setGetEvents()"/>Get events automatically
+        </label>
         <table class='main-table left'>
             <thead>
             <tr>

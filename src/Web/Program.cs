@@ -7,6 +7,7 @@ using MapsterMapper;
 using Serilog;
 using Serilog.Core;
 using Web;
+using Web.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IConfigurationRoot? configuration = new ConfigurationBuilder()
@@ -34,6 +35,16 @@ var config = new TypeAdapterConfig();
 config.Apply(new MappingRegister());
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
+builder.Services.AddScoped<DeviceHub>();
+builder.Services.AddSignalR();
+builder.Services.AddCors(x => x.AddPolicy("CorsPolicy", corsPolicyBuilder =>
+{
+    corsPolicyBuilder
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .WithOrigins("http://localhost:4200");
+}));
 
 WebApplication app = builder.Build();
 
@@ -41,6 +52,7 @@ IServiceProvider serviceProvider = app.Services;
 var migrationManager = serviceProvider.GetRequiredService<MigrationManager>();
 migrationManager.MigrateDatabase(serviceProvider, configuration);
 
+app.UseCors("CorsPolicy");
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -51,5 +63,7 @@ app.UseEndpoints(endpoints =>
 
 app.UseOpenApi();
 app.UseSwaggerUi3();
+
+app.MapHub<DeviceHub>("/deviceHub");
 
 app.Run();
