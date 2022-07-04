@@ -28,6 +28,7 @@
         "@angular-eslint/eslint-plugin": "^13.5.0",
         "@angular/cli": "~14.0.2",
         "@angular/compiler-cli": "^14.0.0",
+        "@aspnet/signalr": "^1.0.27",
         "@types/jasmine": "~4.0.0",
         "@typescript-eslint/eslint-plugin": "^5.29.0",
         "@typescript-eslint/parser": "^5.29.0",

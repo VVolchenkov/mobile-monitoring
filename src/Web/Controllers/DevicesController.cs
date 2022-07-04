@@ -1,4 +1,6 @@
 using Infrastructure;
+using Microsoft.AspNetCore.SignalR;
+using Web.Hubs;
 
 namespace Web.Controllers;
 
@@ -16,6 +18,7 @@ using Web.Models.Dtos;
 public class DevicesController : ControllerBase
 {
     private readonly IUnitOfWork unitOfWork;
+    private readonly IHubContext<DeviceHub> deviceHub;
     private readonly IMapper mapper;
     private readonly ILogger<DevicesController> logger;
 
@@ -23,14 +26,17 @@ public class DevicesController : ControllerBase
     /// Initializes a new instance of the <see cref="DevicesController"/> class.
     /// </summary>
     /// <param name="unitOfWork">unitOfWork.</param>
+    /// <param name="deviceHub">deviceHub.</param>
     /// <param name="mapper">DeviceMapper.</param>
     /// <param name="logger">Logger.</param>
     public DevicesController(
         IUnitOfWork unitOfWork,
+        IHubContext<DeviceHub> deviceHub,
         IMapper mapper,
         ILogger<DevicesController> logger)
     {
         this.unitOfWork = unitOfWork;
+        this.deviceHub = deviceHub;
         this.mapper = mapper;
         this.logger = logger;
     }
@@ -75,6 +81,10 @@ public class DevicesController : ControllerBase
         await unitOfWork.DeviceRepository.Insert(device);
 
         unitOfWork.SaveChanges();
+
+        var deviceDto = mapper.Map<DeviceDto>(device);
+        await deviceHub.Clients.All.SendAsync("uploadDevice", deviceDto);
+
         logger.LogInformation($"Upload statistics for device: {device.Id}");
         return new ObjectResult(device) { StatusCode = StatusCodes.Status201Created };
     }

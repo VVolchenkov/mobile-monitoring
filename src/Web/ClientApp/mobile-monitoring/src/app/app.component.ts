@@ -1,9 +1,18 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {IApiService} from '../interfaces/api-service';
-import {Device} from '../models/device';
-import {DeviceEvents} from '../models/device-events';
-import {BehaviorSubject, of, skip, Subject, switchMap, takeUntil} from 'rxjs';
-import {Event} from '../models/event';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { IApiService } from '../interfaces/api-service';
+import { Device } from '../models/device';
+import {
+    BehaviorSubject,
+    combineLatest,
+    interval,
+    map, Observable,
+    of,
+    Subject,
+    switchMap,
+    takeUntil
+} from 'rxjs';
+import { Event } from '../models/event';
+import { HubService } from '../services/hub.service';
 
 @Component({
     selector: 'app-root',
@@ -13,12 +22,15 @@ import {Event} from '../models/event';
 export class AppComponent implements OnInit, OnDestroy {
     componentDestroyed$: Subject<boolean> = new Subject();
     devices: Device[] = [];
-    events: Event[] = [];
     selectedDevice: Device | undefined;
     selectedDeviceId$ = new BehaviorSubject<string>('');
+    getEvents$ = new BehaviorSubject<boolean>(false);
+    events$: Observable<Event[] | any> = new Observable<Event[] | any>();
 
-    constructor(private readonly apiService: IApiService) {
-    }
+    constructor(
+        private readonly apiService: IApiService,
+        private readonly hubService: HubService
+    ) {}
 
     public ngOnInit(): void {
         this.apiService
@@ -28,18 +40,29 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.devices = response;
             });
 
-        this.selectedDeviceId$
+        this.events$ = combineLatest([this.getEvents$, this.selectedDeviceId$])
             .pipe(
-                switchMap((deviceId) =>
-                    deviceId
-                        ? this.apiService.getDeviceEvents(deviceId)
-                        : of({events: []})
+                switchMap(([getEvents, id]) =>
+                    getEvents ? interval(3000).pipe(map((_) => id)) : of(id)
                 ),
+                switchMap((x) =>
+                    x ? this.apiService.getDeviceEvents(x) : of({ events: [] })
+                ),
+                map(x => x.events),
                 takeUntil(this.componentDestroyed$)
-            )
-            .subscribe((response) => {
-                this.events = response.events;
-            });
+            );
+
+        this.hubService.connection.on('uploadDevice', (device) => {
+            this.devices.push(
+                new Device(
+                    device.id,
+                    device.name,
+                    device.os,
+                    device.version,
+                    device.lastUpdate
+                )
+            );
+        });
     }
 
     public ngOnDestroy(): void {
@@ -54,5 +77,9 @@ export class AppComponent implements OnInit, OnDestroy {
             this.selectedDevice = selectedDevice;
             this.selectedDeviceId$.next(selectedDevice.id);
         }
+    }
+
+    public setGetEvents(): void {
+        this.getEvents$.next(!this.getEvents$);
     }
 }

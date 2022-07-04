@@ -5,6 +5,7 @@ import {FormsModule} from '@angular/forms';
 import {ApiService} from '../services/api.service';
 import {IApiService} from '../interfaces/api-service';
 import {HttpClientModule} from '@angular/common/http';
+import { HubService } from '../services/hub.service';
 
 @NgModule({
     declarations: [AppComponent],
@@ -14,6 +15,7 @@ import {HttpClientModule} from '@angular/common/http';
             provide: IApiService,
             useClass: ApiService,
         },
+        HubService,
     ],
     exports: [],
     bootstrap: [AppComponent],
