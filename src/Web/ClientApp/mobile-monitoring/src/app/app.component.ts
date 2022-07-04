@@ -5,11 +5,11 @@ import {
     BehaviorSubject,
     combineLatest,
     interval,
-    map,
+    map, Observable,
     of,
     Subject,
     switchMap,
-    takeUntil,
+    takeUntil
 } from 'rxjs';
 import { Event } from '../models/event';
 import { HubService } from '../services/hub.service';
@@ -22,11 +22,10 @@ import { HubService } from '../services/hub.service';
 export class AppComponent implements OnInit, OnDestroy {
     componentDestroyed$: Subject<boolean> = new Subject();
     devices: Device[] = [];
-    events: Event[] = [];
     selectedDevice: Device | undefined;
     selectedDeviceId$ = new BehaviorSubject<string>('');
     getEvents$ = new BehaviorSubject<boolean>(false);
-    getEvents = false;
+    events$: Observable<Event[] | any> = new Observable<Event[] | any>();
 
     constructor(
         private readonly apiService: IApiService,
@@ -41,7 +40,7 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.devices = response;
             });
 
-        combineLatest([this.getEvents$, this.selectedDeviceId$])
+        this.events$ = combineLatest([this.getEvents$, this.selectedDeviceId$])
             .pipe(
                 switchMap(([getEvents, id]) =>
                     getEvents ? interval(3000).pipe(map((_) => id)) : of(id)
@@ -49,24 +48,9 @@ export class AppComponent implements OnInit, OnDestroy {
                 switchMap((x) =>
                     x ? this.apiService.getDeviceEvents(x) : of({ events: [] })
                 ),
+                map(x => x.events),
                 takeUntil(this.componentDestroyed$)
-            )
-            .subscribe((response) => {
-                this.events = response.events;
-            });
-
-        this.selectedDeviceId$
-            .pipe(
-                switchMap((deviceId) =>
-                    deviceId
-                        ? this.apiService.getDeviceEvents(deviceId)
-                        : of({ events: [] })
-                ),
-                takeUntil(this.componentDestroyed$)
-            )
-            .subscribe((response) => {
-                this.events = response.events;
-            });
+            );
 
         this.hubService.connection.on('uploadDevice', (device) => {
             this.devices.push(
@@ -96,7 +80,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public setGetEvents(): void {
-        this.getEvents = !this.getEvents;
-        this.getEvents$.next(this.getEvents);
+        this.getEvents$.next(!this.getEvents$);
     }
 }
