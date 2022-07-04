@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <CodeAnalysisRuleSet>infotecs.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>../../infotecs.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,12 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
-
-<!--  <Target Condition="$(Configuration)==DEBUG" Name="Mapster" AfterTargets="AfterBuild">-->
-<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet tool restore" />-->
-<!--    <Exec WorkingDirectory="$(ProjectDir)" Command="dotnet mapster model -a $(TargetDir)$(ProjectName).dll -n Web.Models -o Models\Dtos -r" />-->
-<!--  </Target>-->
 
 </Project>

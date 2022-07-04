@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import * as signalR from '@aspnet/signalr';
-import { HubConnection } from '@aspnet/signalr';
+import {HubConnection} from '@aspnet/signalr';
 
 @Injectable({
     providedIn: 'root',
