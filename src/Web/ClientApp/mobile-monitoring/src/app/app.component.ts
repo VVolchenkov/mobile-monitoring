@@ -1,7 +1,16 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { IApiService } from '../interfaces/api-service';
 import { Device } from '../models/device';
-import { BehaviorSubject, filter, interval, of, skip, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+    BehaviorSubject,
+    combineLatest,
+    interval,
+    map,
+    of,
+    Subject,
+    switchMap,
+    takeUntil,
+} from 'rxjs';
 import { Event } from '../models/event';
 import { HubService } from '../services/hub.service';
 
@@ -32,19 +41,16 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.devices = response;
             });
 
-        this.getEvents$
+        combineLatest([this.getEvents$, this.selectedDeviceId$])
             .pipe(
-                filter(x => x),
-                switchMap(_ => interval(3000)
-                    .pipe(
-                        switchMap(_ =>
-                            this.selectedDevice
-                                ? this.apiService.getDeviceEvents(this.selectedDevice.id)
-                                : of({ events: [] })
-                        ),
-                        takeUntil(this.componentDestroyed$))
-                    )
-                )
+                switchMap(([getEvents, id]) =>
+                    getEvents ? interval(3000).pipe(map((_) => id)) : of(id)
+                ),
+                switchMap((x) =>
+                    x ? this.apiService.getDeviceEvents(x) : of({ events: [] })
+                ),
+                takeUntil(this.componentDestroyed$)
+            )
             .subscribe((response) => {
                 this.events = response.events;
             });
@@ -63,7 +69,15 @@ export class AppComponent implements OnInit, OnDestroy {
             });
 
         this.hubService.connection.on('uploadDevice', (device) => {
-            this.devices.push(new Device(device.id, device.name, device.os, device.version, device.lastUpdate));
+            this.devices.push(
+                new Device(
+                    device.id,
+                    device.name,
+                    device.os,
+                    device.version,
+                    device.lastUpdate
+                )
+            );
         });
     }
 
