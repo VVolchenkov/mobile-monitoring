@@ -26,6 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
     selectedDeviceId$ = new BehaviorSubject<string>('');
     getEvents$ = new BehaviorSubject<boolean>(false);
     events$: Observable<Event[] | any> = new Observable<Event[] | any>();
+    automaticallyLoadEvents = false;
 
     constructor(
         private readonly apiService: IApiService,
@@ -81,6 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public setGetEvents(): void {
-        this.getEvents$.next(!this.getEvents$);
+        this.getEvents$.next(!this.automaticallyLoadEvents);
     }
 }

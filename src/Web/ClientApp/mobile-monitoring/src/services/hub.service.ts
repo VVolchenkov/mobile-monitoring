@@ -1,6 +1,7 @@
-import {Injectable} from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import * as signalR from '@aspnet/signalr';
-import {HubConnection} from '@aspnet/signalr';
+import { HubConnection } from '@aspnet/signalr';
+import { environment } from '../environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -10,9 +11,11 @@ export class HubService {
 
     constructor() {
         this.connection = new signalR.HubConnectionBuilder()
-            .withUrl('https://localhost:7232/deviceHub')
+            .withUrl(`${environment.apiUrl}/deviceHub`)
             .build();
 
-        this.connection.start().then((_) => console.log('signalR connection started'));
+        this.connection
+            .start()
+            .then((_) => console.log('signalR connection started'));
     }
 }
