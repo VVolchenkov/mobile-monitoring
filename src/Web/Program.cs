@@ -9,6 +9,7 @@ using Serilog.Core;
 using Web;
 using Web.Controllers;
 using Web.Hubs;
+using Web.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 IConfigurationRoot? configuration = new ConfigurationBuilder()
@@ -50,7 +51,7 @@ builder.Services.AddCors(x => x.AddPolicy("CorsPolicy", corsPolicyBuilder =>
         .WithOrigins("http://localhost:4200");
 }));
 
-builder.Services.AddScoped<IDeviceService, IDeviceService>();
+builder.Services.AddScoped<IDeviceService, DeviceService>();
 
 WebApplication app = builder.Build();
 
