@@ -1,6 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { IApiService } from '../interfaces/api-service';
-import { Device } from '../models/device';
+import {Component, OnDestroy, OnInit} from '@angular/core';
+import {IApiService} from '../interfaces/api-service';
+import {Device} from '../models/device';
 import {
     BehaviorSubject,
     combineLatest,
@@ -11,8 +11,8 @@ import {
     switchMap,
     takeUntil
 } from 'rxjs';
-import { Event } from '../models/event';
-import { HubService } from '../services/hub.service';
+import {Event} from '../models/event';
+import {HubService} from '../services/hub.service';
 
 @Component({
     selector: 'app-root',
@@ -26,11 +26,13 @@ export class AppComponent implements OnInit, OnDestroy {
     selectedDeviceId$ = new BehaviorSubject<string>('');
     getEvents$ = new BehaviorSubject<boolean>(false);
     events$: Observable<Event[] | any> = new Observable<Event[] | any>();
+    automaticallyLoadEvents = false;
 
     constructor(
         private readonly apiService: IApiService,
         private readonly hubService: HubService
-    ) {}
+    ) {
+    }
 
     public ngOnInit(): void {
         this.apiService
@@ -46,7 +48,7 @@ export class AppComponent implements OnInit, OnDestroy {
                     getEvents ? interval(3000).pipe(map((_) => id)) : of(id)
                 ),
                 switchMap((x) =>
-                    x ? this.apiService.getDeviceEvents(x) : of({ events: [] })
+                    x ? this.apiService.getDeviceEvents(x) : of({events: []})
                 ),
                 map(x => x.events),
                 takeUntil(this.componentDestroyed$)
@@ -80,6 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     public setGetEvents(): void {
-        this.getEvents$.next(!this.getEvents$);
+        this.getEvents$.next(!this.automaticallyLoadEvents);
     }
 }

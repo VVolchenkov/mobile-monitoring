@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "Web.csproj", "{684735F8-1D72-49B0-87A3-99F809E77712}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web", "src\Web\Web.csproj", "{684735F8-1D72-49B0-87A3-99F809E77712}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "..\Infrastructure\Infrastructure\Infrastructure.csproj", "{F13EE43F-E7D6-4070-9449-5008BDBB79FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infrastructure\Infrastructure.csproj", "{F13EE43F-E7D6-4070-9449-5008BDBB79FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "..\Tests\IntegrationTests\IntegrationTests.csproj", "{BC7AE0AB-F18F-4ED0-B2DF-BC35379A49EA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "src\Tests\IntegrationTests\IntegrationTests.csproj", "{BC7AE0AB-F18F-4ED0-B2DF-BC35379A49EA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
