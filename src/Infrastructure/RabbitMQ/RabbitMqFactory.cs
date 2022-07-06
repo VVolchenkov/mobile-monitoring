@@ -27,6 +27,11 @@ public class RabbitMqFactory
 
     private void InitializeQueues()
     {
+        if (rabbitMqConfiguration.HostName == "test")
+        {
+            return;
+        }
+
         using IConnection connection = CreateConnection();
         using IModel? channel = connection.CreateModel();
         channel.QueueDeclare(queue: "EventsSuccess", durable: false, exclusive: false, autoDelete: false, arguments: null);

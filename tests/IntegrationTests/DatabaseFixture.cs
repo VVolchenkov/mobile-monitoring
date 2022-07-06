@@ -18,7 +18,7 @@ public class DatabaseFixture
             .Build();
         var services = new ServiceCollection();
 
-        services.AddInfrastructure(configuration, new RabbitMqConfiguration());
+        services.AddInfrastructure(configuration, new RabbitMqConfiguration {HostName = "test"});
 
         ServiceProvider? serviceProvider = services.BuildServiceProvider();
 
