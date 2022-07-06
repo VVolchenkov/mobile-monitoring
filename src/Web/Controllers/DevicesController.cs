@@ -1,14 +1,15 @@
 using Infrastructure;
+using Infrastructure.RabbitMQ;
 using Microsoft.AspNetCore.SignalR;
 using Web.Hubs;
-
-namespace Web.Controllers;
-
 using Microsoft.AspNetCore.Mvc;
 using Infrastructure.Entities;
 using MapsterMapper;
+using Web.Exceptions;
 using Web.Models;
 using Web.Models.Dtos;
+
+namespace Web.Controllers;
 
 /// <summary>
 /// Device Controller
@@ -17,6 +18,7 @@ using Web.Models.Dtos;
 [Route("api/[controller]")]
 public class DevicesController : ControllerBase
 {
+    private readonly IDeviceService deviceService;
     private readonly IUnitOfWork unitOfWork;
     private readonly IHubContext<DeviceHub> deviceHub;
     private readonly IMapper mapper;
@@ -25,16 +27,19 @@ public class DevicesController : ControllerBase
     /// <summary>
     /// Initializes a new instance of the <see cref="DevicesController"/> class.
     /// </summary>
+    /// <param name="deviceService">deviceService.</param>
     /// <param name="unitOfWork">unitOfWork.</param>
     /// <param name="deviceHub">deviceHub.</param>
     /// <param name="mapper">DeviceMapper.</param>
     /// <param name="logger">Logger.</param>
     public DevicesController(
+        IDeviceService deviceService,
         IUnitOfWork unitOfWork,
         IHubContext<DeviceHub> deviceHub,
         IMapper mapper,
         ILogger<DevicesController> logger)
     {
+        this.deviceService = deviceService;
         this.unitOfWork = unitOfWork;
         this.deviceHub = deviceHub;
         this.mapper = mapper;
@@ -120,22 +125,21 @@ public class DevicesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> UploadDeviceEvents([FromRoute] int deviceId, [FromBody] IEnumerable<EventInput> eventInputs)
     {
-        Device? existingDevice = await unitOfWork.DeviceRepository.Get(deviceId);
-        if (existingDevice == null)
+        try
         {
-            return BadRequest($"There is no device with id:{deviceId}");
+            logger.LogInformation($"Upload device's events for device: {deviceId}");
+
+            IReadOnlyCollection<EventDto> eventsDto = await deviceService.UploadDeviceEvents(deviceId, eventInputs.ToArray());
+
+            return new ObjectResult(eventsDto) { StatusCode = StatusCodes.Status201Created };
         }
-
-        Event[] events = mapper.Map<Event[]>(eventInputs);
-
-        await unitOfWork.EventRepository.InsertBulk(events);
-
-        unitOfWork.SaveChanges();
-
-        EventDto[] eventsDto = mapper.Map<EventDto[]>(events);
-
-        logger.LogInformation($"Upload device's events for device: {deviceId}");
-
-        return new ObjectResult(eventsDto) { StatusCode = StatusCodes.Status201Created };
+        catch (DeviceNotFoundException e)
+        {
+            return BadRequest(e);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
     }
 }

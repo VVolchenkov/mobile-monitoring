@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Web.Models;
 
 public class EventInput

@@ -1,12 +1,13 @@
 using System.Text.Json.Serialization;
-using FluentMigrator.Runner;
 using Infrastructure;
+using Infrastructure.Configuration;
 using Infrastructure.Migrations.Extensions;
 using Mapster;
 using MapsterMapper;
 using Serilog;
 using Serilog.Core;
 using Web;
+using Web.Controllers;
 using Web.Hubs;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,9 @@ IConfigurationRoot? configuration = new ConfigurationBuilder()
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json")
     .AddEnvironmentVariables()
     .Build();
+
+var rabbitMqConfiguration = new RabbitMqConfiguration();
+configuration.Bind("RabbitMq", rabbitMqConfiguration);
 
 Logger? logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
@@ -29,7 +33,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddSwaggerDocument();
-builder.Services.AddInfrastructure(configuration);
+builder.Services.AddInfrastructure(configuration, rabbitMqConfiguration);
 
 var config = new TypeAdapterConfig();
 config.Apply(new MappingRegister());
@@ -45,6 +49,8 @@ builder.Services.AddCors(x => x.AddPolicy("CorsPolicy", corsPolicyBuilder =>
         .AllowCredentials()
         .WithOrigins("http://localhost:4200");
 }));
+
+builder.Services.AddScoped<IDeviceService, IDeviceService>();
 
 WebApplication app = builder.Build();
 

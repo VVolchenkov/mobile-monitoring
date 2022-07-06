@@ -1,4 +1,5 @@
 using Infrastructure;
+using Infrastructure.Configuration;
 using Infrastructure.Migrations.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,7 +18,7 @@ public class DatabaseFixture
             .Build();
         var services = new ServiceCollection();
 
-        services.AddInfrastructure(configuration);
+        services.AddInfrastructure(configuration, new RabbitMqConfiguration());
 
         ServiceProvider? serviceProvider = services.BuildServiceProvider();
 
