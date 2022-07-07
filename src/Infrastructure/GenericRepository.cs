@@ -39,4 +39,11 @@ public abstract class GenericRepository<T> : IRepository<T>
     public virtual Task Insert(T entity) => throw new NotImplementedException();
 
     public virtual Task InsertBulk(IEnumerable<T> entities) => throw new NotImplementedException();
+
+    public Task Delete(int id)
+    {
+        var query = $"DELETE FROM {tableName} WHERE id=@id";
+
+        return UnitOfWork.Connection.ExecuteAsync(query, new { id }, UnitOfWork.Transaction);
+    }
 }

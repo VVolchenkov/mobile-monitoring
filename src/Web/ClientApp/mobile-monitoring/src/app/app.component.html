@@ -12,7 +12,9 @@
             </tr>
             </thead>
             <tbody>
-            <tr (click)='setSelectedDeviceId(device.id)' *ngFor="let device of devices">
+            <tr (click)='setSelectedDevice(device)'
+                [ngClass] = "{'active' : isSelected(device)}"
+            *ngFor="let device of devices">
                 <td>{{device.name}}</td>
                 <td>{{device.lastUpdate | date: 'dd/MM/yyyy hh:mm:ss'}}</td>
             </tr>
@@ -25,6 +27,9 @@
     <div class='details'>
         <ng-container *ngIf='selectedDevice'>
             <span class='large-text'>{{this.selectedDevice!.name}}'</span>
+            <ng-container *ngIf='eventsSubject$ | async as data'>
+                <button (click)='deleteEvents()' *ngIf='data.length > 0'>Удалить логи на узле</button>
+            </ng-container>
 
             <table class='none'>
                 <tbody>
@@ -51,7 +56,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let event of events$ | async">
+                <tr (click)='openModal(selectedDevice.id, event)' *ngFor="let event of eventsSubject$ | async">
                     <td>{{event.date | date: 'dd/MM/yyyy hh:mm:ss'}}</td>
                     <td>{{event.name}}</td>
                     <td>{{event.description}}</td>

@@ -1,0 +1,34 @@
+<h2 mat-dialog-title>{{event.name}}</h2>
+
+<mat-dialog-content class='container' [formGroup]="form">
+
+    <mat-form-field>
+        <input matInput
+               placeholder="Name"
+               [disabled]="true"
+               formControlName="name"
+               readonly
+        >
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput
+               placeholder="Date"
+               [contentEditable]=false
+               formControlName="date"
+               readonly
+        >
+    </mat-form-field>
+
+    <mat-form-field>
+        <input matInput
+               placeholder="Description"
+               formControlName="description"
+        width='1000'>
+    </mat-form-field>
+
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button class="mat-raised-button mat-primary"(click)="save()">Save</button>
+</mat-dialog-actions>

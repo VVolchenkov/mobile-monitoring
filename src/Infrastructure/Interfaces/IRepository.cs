@@ -12,4 +12,6 @@ public interface IRepository<T>
     Task Insert(T entity);
 
     Task InsertBulk(IEnumerable<T> entities);
+
+    Task Delete(int id);
 }

@@ -2,6 +2,7 @@ using Infrastructure;
 using Infrastructure.Entities;
 using Infrastructure.RabbitMQ;
 using MapsterMapper;
+using Microsoft.AspNetCore.Mvc;
 using Web.Controllers;
 using Web.Exceptions;
 using Web.Models;
@@ -60,6 +61,35 @@ public class DeviceService : IDeviceService
         }
 
         return eventsDto.ToList().AsReadOnly();
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteDeviceEvents(int deviceId)
+    {
+        Device? existingDevice = await unitOfWork.DeviceRepository.Get(deviceId);
+        if (existingDevice == null)
+        {
+            throw new DeviceNotFoundException($"There is no device with id:{deviceId}");
+        }
+
+        await unitOfWork.EventRepository.DeleteAllByDeviceId(deviceId);
+
+        unitOfWork.SaveChanges();
+    }
+
+    public async Task UpdateDeviceEvent(int deviceId, EventInput eventInput)
+    {
+        Device? existingDevice = await unitOfWork.DeviceRepository.Get(deviceId);
+        if (existingDevice == null)
+        {
+            throw new DeviceNotFoundException($"There is no device with id:{deviceId}");
+        }
+
+        var eventEntity = mapper.Map<Event>(eventInput);
+
+        await unitOfWork.EventRepository.Update(eventEntity);
+
+        unitOfWork.SaveChanges();
     }
 
     private EventInput[] ValidateEvents(IEnumerable<EventInput> eventInputs)

@@ -79,6 +79,7 @@ public class DevicesController : ControllerBase
         if (existingDevice != null)
         {
             await unitOfWork.DeviceRepository.Update(device);
+            unitOfWork.SaveChanges();
             logger.LogInformation($"Upload statistics for device: {device.Id}");
             return Ok(device);
         }
@@ -132,6 +133,45 @@ public class DevicesController : ControllerBase
             IReadOnlyCollection<EventDto> eventsDto = await deviceService.UploadDeviceEvents(deviceId, eventInputs.ToArray());
 
             return new ObjectResult(eventsDto) { StatusCode = StatusCodes.Status201Created };
+        }
+        catch (DeviceNotFoundException e)
+        {
+            return BadRequest(e);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+
+    [HttpPut("{deviceId:int}/events/{eventId:int}")]
+    public async Task<IActionResult> UpdateDeviceEvent([FromRoute] int deviceId, [FromBody] EventInput eventInput)
+    {
+        try
+        {
+            await deviceService.UpdateDeviceEvent(deviceId, eventInput);
+            return Ok();
+        }
+        catch (DeviceNotFoundException e)
+        {
+            return BadRequest(e);
+        }
+        catch (Exception e)
+        {
+            return Problem(e.Message);
+        }
+    }
+
+    [HttpDelete("{deviceId:int}/events")]
+    public async Task<IActionResult> DeleteDeviceEvent([FromRoute] int deviceId)
+    {
+        try
+        {
+            logger.LogInformation($"Delete device's events for device: {deviceId}");
+
+            await deviceService.DeleteDeviceEvents(deviceId);
+
+            return NoContent();
         }
         catch (DeviceNotFoundException e)
         {
