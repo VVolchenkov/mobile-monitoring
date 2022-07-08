@@ -26,6 +26,10 @@ tbody {
     }
 }
 
+.active {
+    background-color: lightblue;
+}
+
 table.main-table {
     tbody {
         tr:nth-child(even) {

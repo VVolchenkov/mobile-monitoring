@@ -13,7 +13,7 @@ public class DeviceRepository : GenericRepository<Device>, IDeviceRepository
 
     public override Task Update(Device device)
     {
-        string query = "UPDATE devices SET id=@Id, full_name=@FullName, " +
+        string query = "UPDATE devices SET full_name=@FullName, " +
             "platform=@platform, version=@Version, last_update=@LastUpdate WHERE id=@Id";
 
         return UnitOfWork.Connection.ExecuteAsync(query, device, UnitOfWork.Transaction);

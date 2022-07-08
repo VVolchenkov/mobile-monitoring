@@ -4,6 +4,8 @@ namespace Web.Models;
 
 public class EventInput
 {
+    public int Id { get; set; }
+
     public EventInput() => Date = DateTime.UtcNow;
 
     public int DeviceId { get; set; }

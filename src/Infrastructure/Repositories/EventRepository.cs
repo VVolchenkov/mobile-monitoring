@@ -30,7 +30,7 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
 
     public async Task<IReadOnlyCollection<Event>> GetAllByDeviceId(int deviceId)
     {
-        string query = "SELECT d.id, e.date, e.name, e.description, e.device_id " +
+        string query = "SELECT e.id, d.id as deviceId, e.date, e.name, e.description, e.device_id " +
             "FROM devices d JOIN events e ON e.device_id = d.id WHERE d.id=@deviceId";
 
         IEnumerable<Event> events = await UnitOfWork.Connection.QueryAsync<Event, Device, Event>(
@@ -45,5 +45,20 @@ public class EventRepository : GenericRepository<Event>, IEventRepository
             transaction: UnitOfWork.Transaction);
 
         return events.ToList().AsReadOnly();
+    }
+
+    public Task<int> DeleteAllByDeviceId(int deviceId)
+    {
+        var query = "DELETE FROM events WHERE device_id=@deviceId";
+
+        return UnitOfWork.Connection.ExecuteAsync(query, new { deviceId }, UnitOfWork.Transaction);
+    }
+
+    public override Task Update(Event eventEntity)
+    {
+        string query = "UPDATE events SET name=@Name, " +
+        "date=@Date, device_id=@DeviceId, description=@Description WHERE id=@Id";
+
+        return UnitOfWork.Connection.ExecuteAsync(query, eventEntity, UnitOfWork.Transaction);
     }
 }
